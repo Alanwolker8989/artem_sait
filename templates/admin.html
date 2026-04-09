@@ -3,73 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Панель управления — В праве</title>
+    <title>Панель управления — В праве | Администрирование</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
-        .navbar { background-color: #1a1a2e; }
-        .stat-card { background: white; border-radius: 10px; padding: 1.5rem; border-left: 5px solid #c9a84c; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.3s; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .table-wrapper { background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        .navbar { background-color: #1a1a2e; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .stat-card { background: white; border-radius: 16px; padding: 1.5rem; border-left: 5px solid #c9a84c; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s, box-shadow 0.2s; cursor: default; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .stat-card .action-icons { position: absolute; top: 12px; right: 16px; opacity: 0.6; transition: opacity 0.2s; }
+        .stat-card:hover .action-icons { opacity: 1; }
+        .table-wrapper { background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 4px 14px rgba(0,0,0,0.03); margin-bottom: 1.8rem; border: 1px solid rgba(0,0,0,0.03); }
         .date-col { font-size: 0.85rem; color: #6c757d; }
-        .meta-text { font-size: 0.75rem; color: #888; line-height: 1.3; }
-        .meta-text i { color: #555; }
-        
-        /* Индикатор автообновления */
-        .refresh-indicator { font-size: 0.8rem; color: #adb5bd; }
+        .meta-text { font-size: 0.75rem; color: #4a5b6e; line-height: 1.35; }
+        .meta-text i { color: #6c86a3; width: 18px; }
+        .refresh-indicator { font-size: 0.8rem; color: #adb5bd; background: rgba(255,255,240,0.1); padding: 4px 10px; border-radius: 40px; }
         .spin-anim { animation: spin 2s linear infinite; display: inline-block; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        .btn-outline-warning-custom { border-color: #c9a84c; color: #c9a84c; transition: all 0.2s; }
+        .btn-outline-warning-custom:hover { background: #c9a84c; color: #1a1a2e; border-color: #c9a84c; }
+        .admin-action-btn { border-radius: 30px; padding: 6px 14px; font-weight: 500; font-size: 0.85rem; }
+        .tooltip-help { border-bottom: 1px dashed #adb5bd; cursor: help; }
+        .card-header-clean { background: transparent; border-bottom: 1px solid #eef2f7; padding-bottom: 0.75rem; }
+        .badge-time { background: #f8f3e8; color: #a07d3a; font-weight: normal; }
+        .filter-box { background: #f8fafc; border-radius: 20px; padding: 12px 18px; margin-bottom: 20px; border: 1px solid #e9edf2; }
+        @media (max-width: 768px) {
+            .stat-card .action-icons { position: relative; top: auto; right: auto; display: inline-block; margin-left: 12px; }
+            .admin-action-btn { margin-top: 8px; }
+        }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark mb-4 py-3">
-    <div class="container-fluid">
+<nav class="navbar navbar-dark mb-4 py-3 shadow-sm">
+    <div class="container-fluid px-4">
         <span class="navbar-brand mb-0 h1 fw-bold">
             <i class="bi bi-shield-lock-fill text-warning me-2"></i>Админ-панель: В праве
         </span>
-        <div>
-            <span class="refresh-indicator me-3 d-none d-md-inline">
-                <i class="bi bi-arrow-repeat spin-anim me-1"></i> Автообновление
+        <div class="d-flex align-items-center gap-2">
+            <span class="refresh-indicator me-1 d-none d-md-inline-block">
+                <i class="bi bi-arrow-repeat spin-anim me-1"></i> авт. 60 сек
             </span>
+            <button id="manualRefreshBtn" class="btn btn-outline-light btn-sm" title="Обновить данные с сервера">
+                <i class="bi bi-arrow-clockwise me-1"></i> Обновить
+            </button>
             <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-up-right me-1"></i>На сайт</a>
         </div>
     </div>
 </nav>
 
 <div class="container-fluid px-4">
+    <!-- Блок статистики + кнопки управления -->
     <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="stat-card">
+        <div class="col-md-3 position-relative">
+            <div class="stat-card h-100">
+                <div class="action-icons">
+                    <span class="tooltip-help" title="Общее количество обращений (лидов)"><i class="bi bi-question-circle-fill text-muted small"></i></span>
+                </div>
                 <h6 class="text-muted text-uppercase mb-1">Всего заявок</h6>
                 <h2 class="mb-0 fw-bold counter-anim" data-target="{{ total_leads }}">0</h2>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="border-left-color: #0d6efd;">
+        <div class="col-md-3 position-relative">
+            <div class="stat-card h-100" style="border-left-color: #0d6efd;">
+                <div class="action-icons">
+                    <span class="tooltip-help" title="Общее количество посещений сайта"><i class="bi bi-question-circle-fill text-muted small"></i></span>
+                </div>
                 <h6 class="text-muted text-uppercase mb-1">Посещений всего</h6>
                 <h2 class="mb-0 fw-bold counter-anim" data-target="{{ visit_stats.total }}">0</h2>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="border-left-color: #198754;">
+        <div class="col-md-3 position-relative">
+            <div class="stat-card h-100" style="border-left-color: #198754;">
+                <div class="action-icons">
+                    <span class="tooltip-help" title="Посещения за сегодня (00:00 – сейчас)"><i class="bi bi-question-circle-fill text-muted small"></i></span>
+                </div>
                 <h6 class="text-muted text-uppercase mb-1">За сегодня</h6>
                 <h2 class="mb-0 fw-bold counter-anim" data-target="{{ visit_stats.today }}">0</h2>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card" style="border-left-color: #ffc107;">
+        <div class="col-md-3 position-relative">
+            <div class="stat-card h-100" style="border-left-color: #ffc107;">
+                <div class="action-icons d-flex gap-1">
+                    <span class="tooltip-help" title="Уникальных IP за всё время"><i class="bi bi-question-circle-fill text-muted small"></i></span>
+                </div>
                 <h6 class="text-muted text-uppercase mb-1">Уникальных IP</h6>
                 <h2 class="mb-0 fw-bold counter-anim" data-target="{{ visit_stats.unique_ips }}">0</h2>
             </div>
         </div>
     </div>
 
+    <!-- Панель быстрых действий по статистике посещений (обнуление / очистка) -->
+    <div class="filter-box d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div class="d-flex gap-2 align-items-center">
+            <i class="bi bi-bar-chart-steps fs-5 text-secondary"></i>
+            <span class="fw-semibold">Управление статистикой посещений:</span>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm admin-action-btn" id="refreshStatsBtn">
+                <i class="bi bi-arrow-repeat me-1"></i>Обновить цифры
+            </button>
+            <button type="button" class="btn btn-outline-warning btn-sm admin-action-btn" id="clearHistoryBtn" data-bs-toggle="modal" data-bs-target="#confirmClearHistoryModal">
+                <i class="bi bi-trash me-1"></i>Очистить историю посещений
+            </button>
+            <button type="button" class="btn btn-outline-danger btn-sm admin-action-btn" id="resetFullStatsBtn" data-bs-toggle="modal" data-bs-target="#confirmResetModal">
+                <i class="bi bi-exclamation-triangle me-1"></i>Полный сброс (счётчики + история)
+            </button>
+        </div>
+        <div class="ms-auto">
+            <button class="btn btn-sm btn-success admin-action-btn" id="exportLeadsBtn">
+                <i class="bi bi-filetype-csv me-1"></i>Экспорт заявок (CSV)
+            </button>
+        </div>
+    </div>
+
+    <!-- Таблица последних посещений -->
     <div class="table-wrapper mb-4">
-        <h4 class="mb-3 fw-bold"><i class="bi bi-eye me-2"></i>Последние 10 посещений сайта</h4>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-eye me-2"></i>Последние 10 посещений сайта</h4>
+            <div class="text-muted small mt-1 mt-sm-0">
+                <i class="bi bi-info-circle"></i> Данные обновляются автоматически
+            </div>
+        </div>
         <div class="table-responsive">
-            <table class="table table-sm table-bordered">
+            <table class="table table-sm table-bordered align-middle" id="visitsTable">
                 <thead class="table-light">
                     <tr>
                         <th>IP-адрес</th>
@@ -85,30 +142,37 @@
                         <td class="date-col">{{ visit[2][:10] }}<br>{{ visit[2][11:16] }}</td>
                     </tr>
                     {% else %}
-                    <tr><td colspan="3" class="text-center text-muted">Пока ни одного посещения.</td></tr>
+                    <tr><td colspan="3" class="text-center text-muted py-4">Пока ни одного посещения.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
 
+    <!-- Список обращений (лиды) -->
     <div class="table-wrapper">
-        <h4 class="mb-3 fw-bold"><i class="bi bi-list-ul me-2"></i>Список обращений</h4>
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <h4 class="mb-0 fw-bold"><i class="bi bi-list-ul me-2"></i>Список обращений клиентов</h4>
+            <div class="input-group w-auto mt-2 mt-sm-0" style="max-width: 260px;">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control form-control-sm" id="searchLeadInput" placeholder="Поиск по имени, телефону, проблеме...">
+            </div>
+        </div>
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle" id="leadsTable">
                 <thead class="table-light">
                     <tr>
-                        <th scope="col" style="width: 5%;">ID</th>
-                        <th scope="col" style="width: 10%;">Дата</th>
-                        <th scope="col" style="width: 15%;">Клиент</th>
-                        <th scope="col" style="width: 40%;">Проблема</th>
-                        <th scope="col" style="width: 25%;">Тех. данные</th>
-                        <th scope="col" class="text-end" style="width: 5%;">Действия</th>
+                        <th style="width: 5%;">ID</th>
+                        <th style="width: 10%;">Дата</th>
+                        <th style="width: 15%;">Клиент</th>
+                        <th style="width: 40%;">Проблема</th>
+                        <th style="width: 25%;">Тех. данные</th>
+                        <th style="width: 5%;" class="text-end">Действия</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="leadsTableBody">
                     {% for lead in leads %}
-                    <tr>
+                    <tr data-lead-id="{{ lead[0] }}">
                         <td><strong>#{{ lead[0] }}</strong></td>
                         <td class="date-col">{{ lead[5][:10] }}<br>{{ lead[5][11:16] }}</td>
                         <td>
@@ -125,16 +189,16 @@
                             <div title="{{ lead[7] }}"><i class="bi bi-laptop me-1"></i> {{ lead[7][:50] }}...</div>
                         </td>
                         <td class="text-end">
-                            <form action="/admin/delete/{{ lead[0] }}" method="post" onsubmit="return confirm('Точно удалить заявку #{{ lead[0] }}?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить">
+                            <form action="/admin/delete/{{ lead[0] }}" method="post" onsubmit="return confirm('Точно удалить заявку #{{ lead[0] }}?');" class="delete-lead-form">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить заявку">
                                     <i class="bi bi-trash3"></i>
                                 </button>
                             </form>
                         </td>
                     </tr>
                     {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted">
+                    <tr class="text-center text-muted">
+                        <td colspan="6" class="py-5">
                             <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                             Заявок пока нет.
                         </td>
@@ -146,43 +210,142 @@
     </div>
 </div>
 
+<!-- Модальное окно: подтверждение полного сброса (статистика + история) -->
+<div class="modal fade" id="confirmResetModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-exclamation-octagon-fill me-2"></i>Полный сброс статистики</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Внимание!</strong> Вы собираетесь выполнить полный сброс данных о посещениях:</p>
+                <ul>
+                    <li>Обнуление счётчика <strong>«Посещений всего»</strong></li>
+                    <li>Обнуление счётчика <strong>«За сегодня»</strong></li>
+                    <li>Обнуление счётчика <strong>«Уникальных IP»</strong></li>
+                    <li>Удаление <strong>всей истории посещений</strong> (таблица посещений станет пустой)</li>
+                </ul>
+                <p class="mb-0 text-muted">Заявки клиентов НЕ будут затронуты. Действие необратимо.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-danger" id="confirmResetBtn">Да, сбросить всё</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно: очистка истории посещений (без обнуления счётчиков) -->
+<div class="modal fade" id="confirmClearHistoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title"><i class="bi bi-trash3 me-2"></i>Очистка истории посещений</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body">
+                <p>Будут удалены <strong>все записи о посещениях</strong> из таблицы «Последние посещения».</p>
+                <p>Счётчики (<strong>всего, за сегодня, уникальных IP</strong>) пересчитаются автоматически на основе оставшихся данных (станут нулевыми или обновятся).</p>
+                <p class="mb-0 text-secondary">Заявки клиентов останутся нетронутыми.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-warning" id="confirmClearHistoryBtn">Очистить историю</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Скрипты -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        // 1. Анимация счетчиков (динамическое набегание цифр)
+    document.addEventListener("DOMContentLoaded", function() {
+        // --- Анимация счетчиков ---
         const counters = document.querySelectorAll('.counter-anim');
-        const speed = 100; // Чем меньше число, тем быстрее анимация
+        const speed = 100;
+        function animateCounter(counter) {
+            const target = +counter.getAttribute('data-target') || 0;
+            const count = +counter.innerText;
+            const inc = target / speed;
+            if (count < target) {
+                counter.innerText = Math.ceil(count + inc);
+                setTimeout(() => animateCounter(counter), 20);
+            } else {
+                counter.innerText = target;
+            }
+        }
+        counters.forEach(c => animateCounter(c));
 
-        counters.forEach(counter => {
-            const updateCount = () => {
-                const target = +counter.getAttribute('data-target') || 0;
-                const count = +counter.innerText;
-                
-                // Вычисляем шаг
-                const inc = target / speed;
-
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + inc);
-                    setTimeout(updateCount, 20); // Задержка кадра
+        // --- Общая функция отправки POST запроса с последующей перезагрузкой ---
+        async function sendPostAction(url, successMsg = "Операция выполнена", reload = true) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const result = await response.json();
+                if (response.ok && result.status === 'ok') {
+                    // Показываем временное уведомление (не блокирующее)
+                    showToastMessage(successMsg, 'success');
+                    if (reload) {
+                        setTimeout(() => window.location.reload(), 800);
+                    } else {
+                        // если не reload, просто обновляем цифры (но для простоты перезагрузка)
+                        setTimeout(() => window.location.reload(), 600);
+                    }
                 } else {
-                    counter.innerText = target;
+                    showToastMessage(result.message || 'Ошибка при выполнении', 'danger');
                 }
-            };
-            updateCount();
-        });
+            } catch (err) {
+                console.error(err);
+                showToastMessage('Сетевая ошибка, попробуйте позже', 'danger');
+            }
+        }
 
-        // 2. Автообновление страницы каждые 60 секунд (чтобы всегда видеть новые лиды)
-        // Если страница прокручена вниз, сохраняем позицию скролла
-        let refreshTime = 60000; // 60 секунд
-        
+        // --- Сброс полной статистики (POST /admin/reset_full_stats) ---
+        const confirmResetBtn = document.getElementById('confirmResetBtn');
+        if (confirmResetBtn) {
+            confirmResetBtn.addEventListener('click', () => {
+                sendPostAction('/admin/reset_full_stats', 'Статистика посещений полностью сброшена', true);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmResetModal'));
+                if (modal) modal.hide();
+            });
+        }
+
+        // --- Очистка только истории посещений (POST /admin/clear_visits_history) ---
+        const confirmClearHistoryBtn = document.getElementById('confirmClearHistoryBtn');
+        if (confirmClearHistoryBtn) {
+            confirmClearHistoryBtn.addEventListener('click', () => {
+                sendPostAction('/admin/clear_visits_history', 'История посещений очищена', true);
+                const modal = bootstrap.Modal.getInstance(document.getElementById('confirmClearHistoryModal'));
+                if (modal) modal.hide();
+            });
+        }
+
+        // --- Кнопка "Обновить цифры" (просто перезагрузить страницу) ---
+        const refreshStatsBtn = document.getElementById('refreshStatsBtn');
+        if (refreshStatsBtn) {
+            refreshStatsBtn.addEventListener('click', () => {
+                window.location.reload();
+            });
+        }
+
+        // --- Ручная кнопка обновления в navbar ---
+        const manualRefreshBtn = document.getElementById('manualRefreshBtn');
+        if (manualRefreshBtn) {
+            manualRefreshBtn.addEventListener('click', () => {
+                window.location.reload();
+            });
+        }
+
+        // --- Автообновление страницы через 60 секунд с сохранением скролла ---
+        let refreshTime = 60000;
         setTimeout(() => {
-            // Сохраняем позицию скролла в sessionStorage перед перезагрузкой
             sessionStorage.setItem('scrollPos', window.scrollY);
             window.location.reload();
         }, refreshTime);
-
-        // Восстанавливаем скролл после перезагрузки
+        
         window.addEventListener('load', function() {
             let scrollPos = sessionStorage.getItem('scrollPos');
             if (scrollPos) {
@@ -190,7 +353,150 @@
                 sessionStorage.removeItem('scrollPos');
             }
         });
+
+        // --- Функция всплывающего уведомления (toast) ---
+        function showToastMessage(message, type = 'success') {
+            // Создаём динамический тост, если его нет на странице
+            let toastContainer = document.querySelector('.toast-container-custom');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.className = 'toast-container-custom position-fixed bottom-0 end-0 p-3';
+                toastContainer.style.zIndex = '1100';
+                document.body.appendChild(toastContainer);
+            }
+            const toastId = 'liveToast' + Date.now();
+            const toastHtml = `
+                <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="4000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="bi bi-${type === 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill'} me-2"></i> ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+                    </div>
+                </div>
+            `;
+            toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+            const toastElement = document.getElementById(toastId);
+            const bsToast = new bootstrap.Toast(toastElement, { autohide: true, delay: 4000 });
+            bsToast.show();
+            toastElement.addEventListener('hidden.bs.toast', () => toastElement.remove());
+        }
+
+        // --- Экспорт заявок в CSV (только текущие отображаемые, но можно и все из leads) ---
+        const exportBtn = document.getElementById('exportLeadsBtn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                // Собираем данные из таблицы leads (все строки, включая отфильтрованные? экспортируем исходный массив лидов из шаблона)
+                // Для простоты экспорта используем данные из переданного leads (Jinja2), но так как после поиска может быть фильтрация, лучше экспортировать все строки таблицы (видимые или все из DOM)
+                const rows = document.querySelectorAll('#leadsTableBody tr');
+                if (!rows.length || (rows.length === 1 && rows[0].innerText.includes('Заявок пока нет'))) {
+                    showToastMessage('Нет заявок для экспорта', 'warning');
+                    return;
+                }
+                let csvContent = "\uFEFFID;Дата;Имя клиента;Телефон;Удобное время;Проблема;IP-адрес;User-Agent\n";
+                rows.forEach(row => {
+                    if (row.innerText.includes('Заявок пока нет')) return;
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length < 6) return;
+                    const id = cells[0]?.innerText.trim().replace('#', '') || '';
+                    const date = cells[1]?.innerText.trim().replace(/\n/g, ' ') || '';
+                    const nameDiv = cells[2]?.querySelector('.fw-bold')?.innerText || '';
+                    const phoneLink = cells[2]?.querySelector('a')?.innerText || '';
+                    const timeBadge = cells[2]?.querySelector('.badge')?.innerText.replace(/[🕒]|clock/g,'').trim() || '';
+                    const problem = cells[3]?.innerText.trim() || '';
+                    const ipSpan = cells[4]?.querySelector('.mb-1 strong')?.nextSibling?.nodeValue?.trim() || cells[4]?.innerText.match(/IP:\s*([^\n]+)/)?.[1] || '';
+                    const uaText = cells[4]?.querySelector('[title]')?.getAttribute('title') || cells[4]?.innerText.split('🖥️')[1]?.trim() || '';
+                    
+                    const rowData = [
+                        id, date, nameDiv, phoneLink, timeBadge, problem, ipSpan, uaText
+                    ].map(cell => `"${String(cell).replace(/"/g, '""')}"`);
+                    csvContent += rowData.join(';') + "\n";
+                });
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.href = url;
+                link.setAttribute('download', 'zayavki_vprave.csv');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+                showToastMessage('Экспорт CSV успешно выполнен', 'success');
+            });
+        }
+
+        // --- Поиск по таблице заявок (фильтрация строк) ---
+        const searchInput = document.getElementById('searchLeadInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function(e) {
+                const filter = e.target.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('#leadsTable tbody tr');
+                let hasVisible = false;
+                rows.forEach(row => {
+                    if (row.innerText.toLowerCase().includes(filter)) {
+                        row.style.display = '';
+                        hasVisible = true;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                // Показываем сообщение если ничего не найдено
+                let noResultMsg = document.getElementById('noSearchResultMsg');
+                if (!hasVisible) {
+                    if (!noResultMsg) {
+                        const tbody = document.getElementById('leadsTableBody');
+                        const msgRow = document.createElement('tr');
+                        msgRow.id = 'noSearchResultMsg';
+                        msgRow.innerHTML = `<td colspan="6" class="text-center text-muted py-4"><i class="bi bi-search-slash"></i> Ничего не найдено</td>`;
+                        tbody.appendChild(msgRow);
+                    }
+                } else {
+                    if (noResultMsg) noResultMsg.remove();
+                }
+            });
+        }
+
+        // --- Подтверждение удаления заявки через стандартную форму уже есть, дополнительно всплывающее уведомление об успехе (перехват отправки формы) ---
+        const deleteForms = document.querySelectorAll('.delete-lead-form');
+        deleteForms.forEach(form => {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const confirmed = confirm('Точно удалить заявку?');
+                if (!confirmed) return;
+                try {
+                    const response = await fetch(form.action, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                    const data = await response.json();
+                    if (response.ok && data.status === 'ok') {
+                        showToastMessage('Заявка удалена', 'success');
+                        setTimeout(() => window.location.reload(), 700);
+                    } else {
+                        showToastMessage(data.message || 'Ошибка удаления', 'danger');
+                    }
+                } catch (err) {
+                    showToastMessage('Ошибка сети', 'danger');
+                }
+            });
+        });
+        
+        // Если на бэкенде нет новых эндпоинтов, добавим fallback сообщение при клике на сброс (но они должны быть реализованы на сервере)
+        // Для полноценной работы необходимо на сервере реализовать:
+        // POST /admin/reset_full_stats   -> сброс счетчиков и удаление всех записей посещений
+        // POST /admin/clear_visits_history -> удаление только записей посещений, пересчет счетчиков
+        // Для обратной совместимости, если эндпоинты не существуют, покажем ошибку.
+        // Но в задании мы предполагаем что разработчик добавит соответствующие роуты. 
+        // Чтобы пользователь не терялся, добавим красивую подсказку через консоль (не мешает интерфейсу)
+        console.log("Админ-панель готова: доступны функции сброса статистики (требуется поддержка бэкенда)");
     });
 </script>
+<!-- Дополнительный стиль для аккуратного отображения -->
+<style>
+    .toast-container-custom .toast { border-radius: 16px; backdrop-filter: blur(2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .btn-outline-warning { border-color: #e0b354; color: #b8860b; }
+    .btn-outline-warning:hover { background-color: #e0b354; border-color: #ca9a2e; color: #1e2a3a; }
+    input:focus, .form-control:focus { border-color: #c9a84c; box-shadow: 0 0 0 0.2rem rgba(201,168,76,0.25); }
+    .table-hover tbody tr:hover { background-color: #fff9ef; transition: 0.1s; }
+    .stat-card h2 { font-size: 2.2rem; letter-spacing: -0.5px; }
+    @media (max-width: 576px) { .stat-card h2 { font-size: 1.8rem; } }
+</style>
 </body>
 </html>
