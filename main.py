@@ -60,7 +60,7 @@ if ALLOWED_HOSTS != ["*"]:
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Middleware для сбора посещений
+# Middleware для сбора посещений (защита от накрутки внутри add_visit)
 @app.middleware("http")
 async def count_visits(request: Request, call_next):
     if request.method == "GET" and request.url.path == "/":
@@ -186,11 +186,11 @@ async def handle_form(
 def admin_page(request: Request, username: str = Depends(check_admin)):
     try:
         leads = get_all_leads()
-        visit_stats = get_visit_stats()
+        visit_stats = get_visit_stats()  # теперь возвращает только total, today, unique_ips
     except Exception as e:
         log.error("Ошибка загрузки данных: %s", e)
         leads = []
-        visit_stats = {"total": 0, "today": 0, "unique_ips": 0, "recent": []}
+        visit_stats = {"total": 0, "today": 0, "unique_ips": 0}
     log.info("Админка открыта пользователем: %s", username)
     return templates.TemplateResponse(
         "admin.html",
@@ -207,11 +207,8 @@ def delete_item(lead_id: int, username: str = Depends(check_admin)):
         log.error("Ошибка удаления заявки #%d: %s", lead_id, e)
         raise HTTPException(status_code=500, detail="Ошибка удаления")
 
-# ========== НОВЫЕ ЭНДПОИНТЫ ДЛЯ УПРАВЛЕНИЯ ПОСЕЩЕНИЯМИ ==========
-
 @app.post("/admin/clear_visits_history")
 def clear_visits_history(username: str = Depends(check_admin)):
-    """Очищает историю посещений (удаляет все записи). Счётчики обнуляются автоматически."""
     try:
         delete_all_visits()
         log.info("История посещений очищена пользователем %s", username)
@@ -222,7 +219,6 @@ def clear_visits_history(username: str = Depends(check_admin)):
 
 @app.post("/admin/reset_full_stats")
 def reset_full_stats(username: str = Depends(check_admin)):
-    """Полный сброс статистики (то же самое, что и очистка истории)."""
     try:
         delete_all_visits()
         log.info("Полный сброс статистики выполнен пользователем %s", username)

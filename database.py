@@ -1,13 +1,11 @@
-# database.py
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 
 DB_NAME = "leads.db"
 
 def init_db():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS leads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +18,6 @@ def init_db():
             user_agent TEXT
         )
     """)
-    
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS visits (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,19 +26,18 @@ def init_db():
             visited_at TEXT NOT NULL
         )
     """)
-    
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_visits_date ON visits(visited_at)")
     cursor.execute("CREATE INDEX IF NOT EXISTS idx_leads_date ON leads(created_at)")
-    
     conn.commit()
     conn.close()
 
-def save_lead(user_name: str, user_phone: str, contact_time: str, user_problem: str, ip_address: str, user_agent: str):
+def save_lead(user_name, user_phone, contact_time, user_problem, ip_address, user_agent):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    query = "INSERT INTO leads (user_name, user_phone, contact_time, user_problem, created_at, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)"
-    values = (user_name, user_phone, contact_time, user_problem, datetime.now().isoformat(), ip_address, user_agent)
-    cursor.execute(query, values)
+    cursor.execute(
+        "INSERT INTO leads (user_name, user_phone, contact_time, user_problem, created_at, ip_address, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (user_name, user_phone, contact_time, user_problem, datetime.now().isoformat(), ip_address, user_agent)
+    )
     conn.commit()
     conn.close()
 
@@ -60,48 +56,37 @@ def delete_lead(lead_id: int):
     conn.commit()
     conn.close()
 
-# ========== Функции для работы с посещениями ==========
-
 def add_visit(ip_address: str, user_agent: str):
+    """Добавляет визит, только если с этого IP не было визита за последние 5 минут."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
+    five_min_ago = (datetime.now() - timedelta(minutes=5)).isoformat()
     cursor.execute(
-        "INSERT INTO visits (ip_address, user_agent, visited_at) VALUES (?, ?, ?)",
-        (ip_address, user_agent, datetime.now().isoformat())
+        "SELECT 1 FROM visits WHERE ip_address = ? AND visited_at > ? LIMIT 1",
+        (ip_address, five_min_ago)
     )
-    conn.commit()
+    if cursor.fetchone() is None:
+        cursor.execute(
+            "INSERT INTO visits (ip_address, user_agent, visited_at) VALUES (?, ?, ?)",
+            (ip_address, user_agent, datetime.now().isoformat())
+        )
+        conn.commit()
     conn.close()
 
 def get_visit_stats():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    
     cursor.execute("SELECT COUNT(*) FROM visits")
     total = cursor.fetchone()[0]
-    
     today = datetime.now().date().isoformat()
     cursor.execute("SELECT COUNT(*) FROM visits WHERE visited_at LIKE ?", (today + "%",))
     today_visits = cursor.fetchone()[0]
-    
     cursor.execute("SELECT COUNT(DISTINCT ip_address) FROM visits")
     unique_ips = cursor.fetchone()[0]
-    
-    cursor.execute("SELECT ip_address, user_agent, visited_at FROM visits ORDER BY visited_at DESC LIMIT 10")
-    recent = cursor.fetchall()
-    
     conn.close()
-    
-    return {
-        "total": total,
-        "today": today_visits,
-        "unique_ips": unique_ips,
-        "recent": recent
-    }
-
-# ========== Новые функции для сброса статистики ==========
+    return {"total": total, "today": today_visits, "unique_ips": unique_ips}
 
 def delete_all_visits():
-    """Удаляет абсолютно все записи о посещениях."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM visits")
