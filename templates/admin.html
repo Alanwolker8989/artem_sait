@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления — В праве</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', sans-serif; }
+        .navbar { background-color: #1a1a2e; }
+        .stat-card { background: white; border-radius: 10px; padding: 1.5rem; border-left: 5px solid #c9a84c; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: transform 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .table-wrapper { background: white; border-radius: 10px; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .date-col { font-size: 0.85rem; color: #6c757d; }
+        .meta-text { font-size: 0.75rem; color: #888; line-height: 1.3; }
+        .meta-text i { color: #555; }
+        
+        /* Индикатор автообновления */
+        .refresh-indicator { font-size: 0.8rem; color: #adb5bd; }
+        .spin-anim { animation: spin 2s linear infinite; display: inline-block; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark mb-4 py-3">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1 fw-bold">
+            <i class="bi bi-shield-lock-fill text-warning me-2"></i>Админ-панель: В праве
+        </span>
+        <div>
+            <span class="refresh-indicator me-3 d-none d-md-inline">
+                <i class="bi bi-arrow-repeat spin-anim me-1"></i> Автообновление
+            </span>
+            <a href="/" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-up-right me-1"></i>На сайт</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid px-4">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <h6 class="text-muted text-uppercase mb-1">Всего заявок</h6>
+                <h2 class="mb-0 fw-bold counter-anim" data-target="{{ total_leads }}">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: #0d6efd;">
+                <h6 class="text-muted text-uppercase mb-1">Посещений всего</h6>
+                <h2 class="mb-0 fw-bold counter-anim" data-target="{{ visit_stats.total }}">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: #198754;">
+                <h6 class="text-muted text-uppercase mb-1">За сегодня</h6>
+                <h2 class="mb-0 fw-bold counter-anim" data-target="{{ visit_stats.today }}">0</h2>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card" style="border-left-color: #ffc107;">
+                <h6 class="text-muted text-uppercase mb-1">Уникальных IP</h6>
+                <h2 class="mb-0 fw-bold counter-anim" data-target="{{ visit_stats.unique_ips }}">0</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-wrapper mb-4">
+        <h4 class="mb-3 fw-bold"><i class="bi bi-eye me-2"></i>Последние 10 посещений сайта</h4>
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>IP-адрес</th>
+                        <th>User-Agent</th>
+                        <th>Время</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for visit in visit_stats.recent %}
+                    <tr>
+                        <td><code>{{ visit[0] }}</code></td>
+                        <td class="meta-text">{{ visit[1][:80] }}{% if visit[1]|length > 80 %}...{% endif %}</td>
+                        <td class="date-col">{{ visit[2][:10] }}<br>{{ visit[2][11:16] }}</td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="3" class="text-center text-muted">Пока ни одного посещения.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="table-wrapper">
+        <h4 class="mb-3 fw-bold"><i class="bi bi-list-ul me-2"></i>Список обращений</h4>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col" style="width: 5%;">ID</th>
+                        <th scope="col" style="width: 10%;">Дата</th>
+                        <th scope="col" style="width: 15%;">Клиент</th>
+                        <th scope="col" style="width: 40%;">Проблема</th>
+                        <th scope="col" style="width: 25%;">Тех. данные</th>
+                        <th scope="col" class="text-end" style="width: 5%;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lead in leads %}
+                    <tr>
+                        <td><strong>#{{ lead[0] }}</strong></td>
+                        <td class="date-col">{{ lead[5][:10] }}<br>{{ lead[5][11:16] }}</td>
+                        <td>
+                            <div class="fw-bold">{{ lead[1] }}</div>
+                            {% set clean_phone = lead[2].replace(' ', '').replace('(', '').replace(')', '').replace('-', '') %}
+                            <a href="tel:{{ clean_phone }}" class="text-decoration-none small fw-bold">{{ lead[2] }}</a>
+                            <div class="badge bg-warning text-dark mt-1" style="font-size: 0.7rem; white-space: normal; text-align: left;">
+                                <i class="bi bi-clock me-1"></i>{{ lead[3] }}
+                            </div>
+                        </td>
+                        <td style="white-space: normal;">{{ lead[4] }}</td>
+                        <td class="meta-text">
+                            <div class="mb-1"><i class="bi bi-globe me-1"></i> <strong>IP:</strong> {{ lead[6] }}</div>
+                            <div title="{{ lead[7] }}"><i class="bi bi-laptop me-1"></i> {{ lead[7][:50] }}...</div>
+                        </td>
+                        <td class="text-end">
+                            <form action="/admin/delete/{{ lead[0] }}" method="post" onsubmit="return confirm('Точно удалить заявку #{{ lead[0] }}?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Удалить">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Заявок пока нет.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Анимация счетчиков (динамическое набегание цифр)
+        const counters = document.querySelectorAll('.counter-anim');
+        const speed = 100; // Чем меньше число, тем быстрее анимация
+
+        counters.forEach(counter => {
+            const updateCount = () => {
+                const target = +counter.getAttribute('data-target') || 0;
+                const count = +counter.innerText;
+                
+                // Вычисляем шаг
+                const inc = target / speed;
+
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + inc);
+                    setTimeout(updateCount, 20); // Задержка кадра
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCount();
+        });
+
+        // 2. Автообновление страницы каждые 60 секунд (чтобы всегда видеть новые лиды)
+        // Если страница прокручена вниз, сохраняем позицию скролла
+        let refreshTime = 60000; // 60 секунд
+        
+        setTimeout(() => {
+            // Сохраняем позицию скролла в sessionStorage перед перезагрузкой
+            sessionStorage.setItem('scrollPos', window.scrollY);
+            window.location.reload();
+        }, refreshTime);
+
+        // Восстанавливаем скролл после перезагрузки
+        window.addEventListener('load', function() {
+            let scrollPos = sessionStorage.getItem('scrollPos');
+            if (scrollPos) {
+                window.scrollTo(0, parseInt(scrollPos));
+                sessionStorage.removeItem('scrollPos');
+            }
+        });
+    });
+</script>
+</body>
+</html>

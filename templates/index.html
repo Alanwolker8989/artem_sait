@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>В праве — Профессиональная правовая защита</title>
+    <meta name="description" content="Профессиональная юридическая помощь: банкротство физлиц и ИП, уголовные дела, административные споры, материнский капитал, кредиты.">
+    <meta property="og:title" content="В праве — Ваш личный юрист">
+    <meta property="og:description" content="Профессиональная правовая защита. Банкротство, уголовные и административные дела.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&h=400&fit=crop">
+    <meta name="theme-color" content="#1a1a2e">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-dark: #b08d3a;
+            --dark-blue: #1a1a2e;
+            --navy: #16213e;
+            --white: #ffffff;
+            --light-gray: #f8f9fa;
+        }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; color: #333; overflow-x: hidden; }
+
+        .navbar-custom { background: var(--dark-blue); padding: 1rem 0; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
+        .navbar-custom .navbar-brand { color: var(--gold); font-weight: 700; font-size: 1.4rem; letter-spacing: 1px; display: flex; align-items: center; }
+        .navbar-custom .nav-link { color: rgba(255, 255, 255, 0.85); font-weight: 500; margin: 0 0.5rem; transition: color 0.3s; }
+        .navbar-custom .nav-link:hover { color: var(--gold); }
+        .navbar-toggler { border-color: rgba(201, 168, 76, 0.5); }
+        .navbar-toggler-icon { filter: invert(1); }
+
+        .btn-gold { background: var(--gold); color: var(--dark-blue); font-weight: 700; padding: 0.85rem 2rem; border-radius: 50px; border: none; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; box-shadow: 0 4px 10px rgba(201, 168, 76, 0.2); text-decoration: none; display: inline-block; }
+        .btn-gold:hover { background: var(--gold-dark); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(201, 168, 76, 0.3); color: var(--white); }
+        .btn-outline-gold { border: 2px solid var(--gold); color: var(--gold); padding: 0.85rem 2rem; border-radius: 50px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s; text-decoration: none; display: inline-block; }
+        .btn-outline-gold:hover { background: var(--gold); color: var(--dark-blue); }
+
+        section { padding: 6rem 0; }
+        .section-title { font-size: 2.5rem; font-weight: 800; color: var(--dark-blue); position: relative; display: inline-block; margin-bottom: 1rem; }
+        .section-title::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 60px; height: 3px; background: var(--gold); border-radius: 2px; }
+        .text-start .section-title::after { left: 0; transform: none; }
+
+        .hero-section { background: linear-gradient(135deg, var(--dark-blue) 0%, var(--navy) 100%); min-height: 100vh; display: flex; align-items: center; position: relative; padding-top: 8rem; }
+        .hero-title { font-size: 3.5rem; font-weight: 800; color: var(--white); line-height: 1.2; }
+        .hero-title span { color: var(--gold); }
+        .hero-badge { display: inline-block; background: rgba(201, 168, 76, 0.15); color: var(--gold); padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1.5rem; border: 1px solid rgba(201, 168, 76, 0.3); }
+        
+        .hero-features-box { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 15px; padding: 2.5rem; backdrop-filter: blur(10px); }
+        .feature-icon { width: 45px; height: 45px; min-width: 45px; background: rgba(201, 168, 76, 0.15); color: var(--gold); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-right: 1.2rem; }
+
+        .image-wrapper {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            background: #f5f0e8;
+        }
+        .image-wrapper img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 4 / 3;
+            object-fit: contain;
+            object-position: center center;
+            display: block;
+            padding: 12px;
+        }
+        .image-bg { position: absolute; top: 20px; bottom: -20px; left: -20px; right: 20px; background: var(--gold); border-radius: 15px; z-index: 0; }
+        .content-z { position: relative; z-index: 1; }
+        .experience-badge { position: absolute; bottom: -20px; right: -20px; background: var(--gold); color: var(--dark-blue); padding: 1.5rem; border-radius: 15px; text-align: center; box-shadow: 0 5px 15px rgba(201, 168, 76, 0.3); }
+        .experience-badge .number { display: block; font-size: 1.8rem; font-weight: 800; line-height: 1; }
+        .experience-badge .text { display: block; font-size: 0.8rem; font-weight: 600; margin-top: 4px; }
+        .about-feature { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .icon-box { width: 50px; height: 50px; min-width: 50px; background: rgba(201, 168, 76, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 1.3rem; }
+
+        .service-card { background: var(--white); border-radius: 15px; padding: 2rem 1.5rem; text-align: center; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); border: 1px solid #eee; transition: all 0.3s; height: 100%; position: relative; overflow: hidden; }
+        .service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gold); transform: scaleX(0); transition: transform 0.3s; }
+        .service-card:hover::before { transform: scaleX(1); }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); }
+        .service-icon { width: 60px; height: 60px; background: rgba(201, 168, 76, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-size: 1.6rem; color: var(--gold); transition: all 0.3s; }
+        .service-card:hover .service-icon { background: var(--gold); color: var(--white); }
+
+        .contact-section { background: linear-gradient(135deg, var(--dark-blue), var(--navy)); padding: 5rem 0; }
+        .contact-form { background: var(--white); border-radius: 15px; padding: 3rem; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2); }
+        .contact-form .form-control { border: 2px solid #e9ecef; border-radius: 8px; padding: 0.9rem 1rem; font-size: 1rem; }
+        .contact-form .form-control:focus { border-color: var(--gold); box-shadow: none; outline: none; }
+        
+        .success-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .success-modal { background: white; border-radius: 15px; padding: 3rem; text-align: center; max-width: 400px; width: 90%; }
+        .success-modal .checkmark { width: 70px; height: 70px; background: #28a745; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 2.2rem; color: white; }
+
+        @media (max-width: 991px) {
+            .hero-section { min-height: auto; padding: 7rem 0 4rem; }
+            .hero-title { font-size: 2.8rem; }
+            .image-bg { display: none; }
+            .contact-form { padding: 2rem; }
+            .hero-features-box { padding: 1.5rem; margin-top: 1rem; }
+        }
+        @media (max-width: 768px) {
+            section { padding: 4rem 0; }
+            .hero-title { font-size: 2.2rem; }
+            .section-title { font-size: 2rem; }
+            .experience-badge { right: 10px; bottom: -15px; padding: 1rem; }
+            .d-flex.gap-3 { flex-direction: column; }
+            .d-flex.gap-3 a { width: 100%; text-align: center; }
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 6" width="30" height="20" class="me-2" style="border-radius: 2px;">
+                <rect fill="#ffffff" width="9" height="2"/><rect fill="#0039a6" y="2" width="9" height="2"/><rect fill="#d52b1e" y="4" width="9" height="2"/>
+            </svg>
+            В ПРАВЕ
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMenu">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#hero">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="#about">Обо мне</a></li>
+                <li class="nav-item"><a class="nav-link" href="#team">О команде</a></li>
+                <li class="nav-item"><a class="nav-link" href="#services">Услуги</a></li>
+                <li class="nav-item"><a class="nav-link" href="#contact">Контакты</a></li>
+            </ul>
+            <a href="#contact" class="btn-gold ms-lg-3 mt-3 mt-lg-0 text-center d-block d-lg-inline-block">Заказать консультацию</a>
+        </div>
+    </div>
+</nav>
+
+<section class="hero-section" id="hero">
+    <div class="container position-relative">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="hero-badge"><i class="bi bi-person-badge me-1"></i> Ваш личный юрист</div>
+                <h1 class="hero-title">Профессиональная<br><span>правовая</span> защита</h1>
+                <p class="hero-subtitle text-white-50 mt-3" style="font-size: 1.1rem; line-height: 1.6;">
+                    Помогаю физическим лицам и ИП решать правовые вопросы. Беру на себя всю бумажную рутину и общение с государственными органами. Индивидуальный подход и строгая конфиденциальность.
+                </p>
+                <div class="d-flex gap-3 mt-4 flex-wrap">
+                    <a href="#contact" class="btn-gold">Заказать консультацию</a>
+                    <a href="#services" class="btn-outline-gold">Мои услуги</a>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="hero-features-box">
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="feature-icon"><i class="bi bi-person-check-fill"></i></div>
+                        <div>
+                            <h5 class="text-white mb-1 fw-bold fs-6">Прямой контакт</h5>
+                            <p class="text-white-50 small mb-0" style="line-height: 1.4;">Вы общаетесь лично со мной, без посредников и неопытных помощников.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="feature-icon"><i class="bi bi-clipboard2-check-fill"></i></div>
+                        <div>
+                            <h5 class="text-white mb-1 fw-bold fs-6">Честная оценка дела</h5>
+                            <p class="text-white-50 small mb-0" style="line-height: 1.4;">Анализирую ситуацию и говорю реальные шансы до начала сотрудничества.</p>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-start">
+                        <div class="feature-icon"><i class="bi bi-shield-fill-check"></i></div>
+                        <div>
+                            <h5 class="text-white mb-1 fw-bold fs-6">Защита от стресса</h5>
+                            <p class="text-white-50 small mb-0" style="line-height: 1.4;">Сам хожу в суды, общаюсь с кредиторами и готовлю все документы.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 order-1 order-lg-1">
+                <div class="image-wrapper content-z">
+                    <img src="/static/duplom.jpg"
+                         alt="Частный юрист Артем Сергеевич"
+                         loading="lazy">
+                    <div class="experience-badge">
+                        <span class="number">15+</span>
+                        <span class="text">лет опыта</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-7 order-2 order-lg-2">
+                <h2 class="section-title text-start">Обо мне</h2>
+                <p class="mt-4 mb-4" style="font-size: 1.05rem; line-height: 1.8; color: #333;">
+                    <strong style="color: var(--dark-blue); display: block; margin-bottom: 0.5rem;">Здравствуйте! Я — Артем Сергеевич Паньшин, юрист</strong>
+                </p>
+                <p class="mb-4 text-muted" style="font-size: 1.05rem; line-height: 1.8;">
+                    Я практикую более чем десятилетним опытом профессиональной деятельности в области юриспруденции. Специализируюсь на защите прав и интересов граждан в различных отраслях права.
+                </p>
+                <p class="mb-4 text-muted" style="font-size: 1.05rem; line-height: 1.8;">
+                    За время своей практики с 2014 года оказал квалифицированную юридическую помощь сотням клиентов, помогая им разрешить сложные правовые вопросы и восстановить нарушенные права.
+                </p>
+                <p class="mb-4 text-muted" style="font-size: 1.05rem; line-height: 1.8;">
+                    Приоритет моей работы — защита ваших интересов и достижение справедливого исхода в каждом деле. Я придерживаюсь принципов честности и ответственного подхода к ведению дел.
+                </p>
+                <div class="about-feature">
+                    <div class="icon-box"><i class="bi bi-shield-lock"></i></div>
+                    <div>
+                        <h5 class="fw-bold">Конфиденциальность</h5>
+                        <p class="text-muted">Ваши данные, детали сделок и обстоятельства дела находятся под строгой защитой и не передаются третьим лицам.</p>
+                    </div>
+                </div>
+                <div class="about-feature mb-0">
+                    <div class="icon-box"><i class="bi bi-bullseye"></i></div>
+                    <div>
+                        <h5 class="fw-bold">Работа на результат</h5>
+                        <p class="text-muted">Тщательно изучаю материалы и берусь только за те дела, где реально могу помочь.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-light" id="team">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5 position-relative order-2 order-lg-1">
+                <div class="image-bg d-none d-lg-block"></div>
+                <div class="image-wrapper content-z">
+                    <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=900&fit=crop" alt="Команда юристов" loading="lazy">
+                </div>
+            </div>
+            <div class="col-lg-7 order-1 order-lg-2">
+                <h2 class="section-title text-start mb-4">О нашей команде</h2>
+                <div class="text-muted" style="font-size: 1.05rem; line-height: 1.8;">
+                    <p>Моя команда — это объединение квалифицированных юристов и адвокатов с большим практическим опытом. Каждый из специалистов отлично знает свою область права, что позволяет нам браться за дела любой сложности.</p>
+                    <p>Мы уверены, что качественная правовая помощь строится не только на блестящем знании законов, но и на умении внимательно слушать клиента и быстро принимать точные решения.</p>
+                    <p>Благодаря слаженной работе и разработке индивидуальной стратегии защиты, мы успешно сопровождаем граждан и бизнес, обеспечивая уверенность в результате на каждом этапе.</p>
+                </div>
+                <div class="d-flex align-items-center mt-4 pt-3 border-top">
+                    <i class="bi bi-check-circle-fill fs-3 me-3" style="color: var(--gold);"></i>
+                    <span class="fw-bold" style="color: var(--dark-blue); font-size: 1.1rem;">Работаем на результат. Защищаем ваши интересы.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="services">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="section-title">Мои услуги</h2>
+            <p class="text-muted mt-2">Профессиональное решение ваших правовых задач</p>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-4 col-md-6"><div class="service-card"><div class="service-icon"><i class="bi bi-bank"></i></div><h5>Банкротство</h5><p class="text-muted mb-0">Полное сопровождение процедуры банкротства для физических лиц и ИП. Законное списание долгов.</p></div></div>
+            <div class="col-lg-4 col-md-6"><div class="service-card"><div class="service-icon"><i class="bi bi-shield-exclamation"></i></div><h5>Уголовные дела</h5><p class="text-muted mb-0">Квалифицированная юридическая консультация, анализ ситуации, выработка надежной стратегии защиты.</p></div></div>
+            <div class="col-lg-4 col-md-6"><div class="service-card"><div class="service-icon"><i class="bi bi-file-earmark-ruled"></i></div><h5>Административные дела</h5><p class="text-muted mb-0">Представление интересов при ДТП, лишении водительских прав, защите прав потребителей и спорах с госорганами.</p></div></div>
+            <div class="col-lg-4 col-md-6"><div class="service-card"><div class="service-icon"><i class="bi bi-house-heart"></i></div><h5>Материнский капитал</h5><p class="text-muted mb-0">Юридическое сопровождение сделок, тщательная проверка чистоты недвижимости и оформление долей.</p></div></div>
+            <div class="col-lg-4 col-md-6"><div class="service-card"><div class="service-icon"><i class="bi bi-credit-card-2-front"></i></div><h5>Кредитование</h5><p class="text-muted mb-0">Консультирование и помощь в реструктуризации кредитов, разрешение споров с банками, защита от коллекторов.</p></div></div>
+        </div>
+    </div>
+</section>
+
+<section class="contact-section" id="contact">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-10">
+                <div class="contact-form">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold" style="color: var(--dark-blue);">Оставить заявку</h2>
+                        <p class="text-muted">Заполните форму, и я свяжусь с вами для проведения консультации.</p>
+                    </div>
+                    <form action="/send-lead" method="post" id="leadForm">
+                        <input type="text" name="bot_trap" style="display: none;" tabindex="-1" autocomplete="off">
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold"><i class="bi bi-person me-1"></i> ВАШЕ ИМЯ</label>
+                            <input type="text" class="form-control form-control-lg" name="user_name" placeholder="Иван Иванов" required minlength="2" maxlength="50">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold"><i class="bi bi-telephone me-1"></i> ТЕЛЕФОН</label>
+                            <input type="tel" class="form-control form-control-lg" id="phone-input" name="user_phone" placeholder="+7 (___) ___-__-__" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold"><i class="bi bi-clock me-1"></i> УДОБНОЕ ВРЕМЯ ДЛЯ ЗВОНКА</label>
+                            <input type="text" class="form-control form-control-lg" name="contact_time" placeholder="Например: После 18:00, завтра утром или сейчас" required maxlength="50">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label text-muted small fw-bold"><i class="bi bi-chat-dots me-1"></i> ОПИШИТЕ ПРОБЛЕМУ</label>
+                            <textarea class="form-control form-control-lg" name="user_problem" rows="3" placeholder="Коротко опишите вашу ситуацию..." required maxlength="1000"></textarea>
+                        </div>
+                        <button type="submit" id="submitBtn" class="btn-gold w-100 py-3 text-center" style="border-radius: 10px; font-size: 1.1rem; display: block;">
+                            <i class="bi bi-send-fill me-2"></i>Заказать консультацию
+                        </button>
+                        <p class="text-muted text-center mt-3 mb-0" style="font-size: 0.8rem;">
+                            <i class="bi bi-shield-lock me-1"></i> Ваши данные надежно защищены. 
+                            <a href="#privacy" onclick="showPrivacy()" style="color: var(--gold); text-decoration: none; cursor: pointer; border-bottom: 1px dotted var(--gold);">Политика конфиденциальности</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer style="background: #0d0d1a; padding: 2rem 0; text-align: center; color: rgba(255, 255, 255, 0.4); font-size: 0.9rem;">
+    <div class="container">
+        &copy; 202 В праве. Все права защищены.
+    </div>
+</footer>
+
+{% if success %}
+<div class="success-overlay" id="successOverlay" onclick="this.remove()">
+    <div class="success-modal" onclick="event.stopPropagation()">
+        <div class="checkmark"><i class="bi bi-check-lg"></i></div>
+        <h3 class="fw-bold" style="color: var(--dark-blue);">Заявка отправлена!</h3>
+        <p class="text-muted mt-2">Спасибо за обращение! Я свяжусь с вами в ближайшее время.</p>
+        <button class="btn-gold mt-3 text-center" onclick="document.getElementById('successOverlay').remove()">Закрыть</button>
+    </div>
+</div>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const phoneInput = document.getElementById('phone-input');
+        
+        phoneInput.addEventListener('input', function (e) {
+            let inputNumbersValue = e.target.value.replace(/\D/g, '');
+            let formattedInputValue = '';
+            if (!inputNumbersValue) return e.target.value = '';
+
+            if (['7', '8', '9'].indexOf(inputNumbersValue[0]) > -1) {
+                if (inputNumbersValue[0] === '9') inputNumbersValue = '7' + inputNumbersValue;
+                formattedInputValue = '+7 ';
+                if (inputNumbersValue.length > 1) formattedInputValue += '(' + inputNumbersValue.substring(1, 4);
+                if (inputNumbersValue.length >= 5) formattedInputValue += ') ' + inputNumbersValue.substring(4, 7);
+                if (inputNumbersValue.length >= 8) formattedInputValue += '-' + inputNumbersValue.substring(7, 9);
+                if (inputNumbersValue.length >= 10) formattedInputValue += '-' + inputNumbersValue.substring(9, 11);
+            } else {
+                formattedInputValue = '+' + inputNumbersValue.substring(0, 15);
+            }
+            e.target.value = formattedInputValue;
+        });
+
+        phoneInput.addEventListener('keydown', function(e) {
+            if (e.keyCode == 8 || e.keyCode == 46) return; 
+            if (/[a-zA-Zа-яА-Я]/.test(e.key)) e.preventDefault(); 
+        });
+
+        document.getElementById('leadForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Отправка...';
+        });
+    });
+
+    document.querySelectorAll('.nav-link, .btn-gold, .btn-outline-gold').forEach(link => {
+        link.addEventListener('click', function() {
+            const bsCollapse = bootstrap.Collapse.getInstance(document.getElementById('navMenu'));
+            if (bsCollapse) bsCollapse.hide();
+        });
+    });
+
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar-custom');
+        if (window.scrollY > 50) {
+            navbar.style.padding = '0.5rem 0';
+            navbar.style.background = 'rgba(26, 26, 46, 0.98)';
+        } else {
+            navbar.style.padding = '1rem 0';
+            navbar.style.background = 'var(--dark-blue)';
+        }
+    });
+
+    function showPrivacy() {
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 1rem;
+        `;
+        
+        modal.innerHTML = `
+            <div style="
+                background: white;
+                border-radius: 15px;
+                padding: 2.5rem;
+                max-width: 600px;
+                max-height: 80vh;
+                overflow-y: auto;
+                width: 100%;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="margin: 0; color: var(--dark-blue); font-weight: 700;">Политика конфиденциальности</h2>
+                    <button onclick="this.closest('div').parentElement.remove()" style="
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: #999;
+                        padding: 0;
+                        width: 30px;
+                        height: 30px;
+                    ">×</button>
+                </div>
+                
+                <div style="color: #555; line-height: 1.8; font-size: 0.95rem;">
+                    <h4 style="color: var(--dark-blue); margin-top: 1.5rem; margin-bottom: 0.5rem;">1. Сбор информации</h4>
+                    <p>Мы собираем личную информацию, которую вы добровольно предоставляете при заполнении контактной формы: имя, номер телефона, описание вашей проблемы.</p>
+                    
+                    <h4 style="color: var(--dark-blue); margin-top: 1.5rem; margin-bottom: 0.5rem;">2. Использование информации</h4>
+                    <p>Полученная информация используется исключительно для связи с вами, предоставления юридической консультации и оказания услуг. Данные не передаются третьим лицам без вашего согласия.</p>
+                    
+                    <h4 style="color: var(--dark-blue); margin-top: 1.5rem; margin-bottom: 0.5rem;">3. Защита данных</h4>
+                    <p>Все информация хранится в защищённой базе данных. Доступ ограничен только необходимым персоналом. Информация о вашем деле защищена адвокатской тайной и не разглашается.</p>
+                    
+                    <h4 style="color: var(--dark-blue); margin-top: 1.5rem; margin-bottom: 0.5rem;">4. Правовая база</h4>
+                    <p>Обработка данных осуществляется в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О защите персональных данных» и Федеральным законом от 31.05.2002 № 63-ФЗ об адвокатской деятельности.</p>
+                    
+                    <h4 style="color: var(--dark-blue); margin-top: 1.5rem; margin-bottom: 0.5rem;">5. Ваши права</h4>
+                    <p>Вы имеете право в любой момент потребовать доступ к вашим данным, их исправление или удаление, написав письмо на электронную почту или позвонив по телефону.</p>
+                    
+                    <h4 style="color: var(--dark-blue); margin-top: 1.5rem; margin-bottom: 0.5rem;">6. Контакты</h4>
+                    <p>По вопросам обработки персональных данных свяжитесь с нами по телефону: +7 (999) ххх-хх-хх или по электронной почте: info@vpravo.ru</p>
+                </div>
+                
+                <button onclick="this.closest('div').parentElement.remove()" style="
+                    background: var(--gold);
+                    color: var(--dark-blue);
+                    border: none;
+                    padding: 0.85rem 2rem;
+                    border-radius: 8px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    margin-top: 1.5rem;
+                    width: 100%;
+                    font-size: 1rem;
+                ">Закрыть</button>
+            </div>
+        `;
+        
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) modal.remove();
+        });
+        
+        document.body.appendChild(modal);
+    }
+
+</script>
+</body>
+</html>
